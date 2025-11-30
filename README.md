@@ -11,7 +11,7 @@
    npm install
    npm run dev
    ```
-
+ 
 2. **Install Frontend Dependencies & Start the App**  
    Navigate to the frontend directory, install dependencies, and start the application:
    ```sh

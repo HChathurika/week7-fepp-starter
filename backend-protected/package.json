@@ -1,8 +1,8 @@
 {
-  "name": "API Server",
+  "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
@@ -18,22 +18,23 @@
     "globalTeardown": "./tests/teardown.js"
   },
   "overrides": {
-    "glob": "10.4.2"
+    "glob": "^13.0.0"
   },
   "dependencies": {
-    "bcryptjs": "^3.0.2",
+    "bcryptjs": "^3.0.3",
     "colors": "^1.4.0",
     "cors": "^2.8.5",
-    "cross-env": "^10.0.0",
-    "dotenv": "^17.2.2",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.18.2",
-    "validator": "^13.15.15"
+    "mongoose": "^8.20.0",
+    "morgan": "^1.10.1",
+    "validator": "^13.15.23"
   },
   "devDependencies": {
-    "jest": "^30.1.3",
-    "nodemon": "^3.1.10",
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.11",
     "supertest": "^7.1.4"
   }
 }
