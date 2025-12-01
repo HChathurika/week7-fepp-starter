@@ -4,6 +4,8 @@ const jobSchema = new mongoose.Schema({
   title: { type: String, required: true },
   type: { type: String, required: true },
   description: { type: String, required: true },
+  location: { type: String, required: true },   // NEW
+  salary: { type: Number, required: true },     // NEW
   company: {
     name: { type: String, required: true },
     contactEmail: { type: String, required: true },
@@ -11,8 +13,7 @@ const jobSchema = new mongoose.Schema({
   }
 });
 
-
-//add  virtual field id
+// Add virtual field id
 jobSchema.set('toJSON', {
   virtuals: true,
   transform: (doc, ret) => {
@@ -24,4 +25,3 @@ jobSchema.set('toJSON', {
 const Job = mongoose.model('Job', jobSchema);
 
 module.exports = Job;
-
