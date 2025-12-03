@@ -6,6 +6,8 @@ import HomePage from "./pages/HomePage";
 import AddJobPage from "./pages/AddJobPage";
 import EditJobPage from "./pages/EditJobPage";
 import JobPage from "./pages/JobPage";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
 import NotFoundPage from "./pages/NotFoundPage";
 
@@ -46,8 +48,13 @@ const App = () => {
                 />
               }
             />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/add-job" element={<AddJobPage setJobs={setJobs} />} />
-            <Route path="/edit-job/:id" element={<EditJobPage setJobs={setJobs} />} />
+            <Route
+              path="/edit-job/:id"
+              element={<EditJobPage setJobs={setJobs} />}
+            />
             <Route path="/jobs/:id" element={<JobPage setJobs={setJobs} />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

@@ -2,27 +2,36 @@ import { useState } from "react";
 
 export default function useSignup(url) {
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const signup = async (object) => {
     setIsLoading(true);
     setError(null);
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(object),
-    });
-    const user = await response.json();
 
-    if (!response.ok) {
-      console.log(user.error);
-      setError(user.error);
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(object),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        setError(data.error || "Signup failed");
+        setIsLoading(false);
+        return false; // indicate failure
+      }
+
+      // Save entire response to localStorage, not just data.user
+      localStorage.setItem("user", JSON.stringify(data));
       setIsLoading(false);
-      return error;
+      return true; // indicate success
+    } catch (err) {
+      setError("Network error");
+      setIsLoading(false);
+      return false;
     }
-
-    localStorage.setItem("user", JSON.stringify(user));
-    setIsLoading(false);
   };
 
   return { signup, isLoading, error };
