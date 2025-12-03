@@ -24,7 +24,7 @@ const Login = () => {
     if (success) {
       navigate("/");
     } else {
-      setFormError(error || "login fail.Try again");
+      setFormError(error || "Login fail.Try again");
     }
   };
 
