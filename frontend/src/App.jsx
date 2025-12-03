@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 // Pages & Components
@@ -14,6 +14,9 @@ import NotFoundPage from "./pages/NotFoundPage";
 const App = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("token") || !!localStorage.getItem("user")
+  );
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -34,7 +37,10 @@ const App = () => {
   return (
     <div className="App">
       <BrowserRouter>
-        <Navbar />
+        <Navbar
+          isAuthenticated={isAuthenticated}
+          setIsAuthenticated={setIsAuthenticated}
+        />
         <div className="content">
           <Routes>
             <Route
@@ -48,14 +54,38 @@ const App = () => {
                 />
               }
             />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/add-job" element={<AddJobPage setJobs={setJobs} />} />
+            <Route
+              path="/signup"
+              element={<Signup setIsAuthenticated={setIsAuthenticated} />}
+            />
+            <Route
+              path="/login"
+              element={<Login setIsAuthenticated={setIsAuthenticated} />}
+            />
+            <Route
+              path="/add-job"
+              element={
+                isAuthenticated ? (
+                  <AddJobPage setJobs={setJobs} />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
             <Route
               path="/edit-job/:id"
-              element={<EditJobPage setJobs={setJobs} />}
+              element={
+                isAuthenticated ? (
+                  <EditJobPage setJobs={setJobs} />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
             />
-            <Route path="/jobs/:id" element={<JobPage setJobs={setJobs} />} />
+            <Route
+              path="/jobs/:id"
+              element={<JobPage setJobs={setJobs} isAuthenticated={isAuthenticated} />}
+            />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>

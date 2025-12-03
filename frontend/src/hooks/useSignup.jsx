@@ -23,10 +23,11 @@ export default function useSignup(url) {
         return false; // indicate failure
       }
 
-      // Save entire response to localStorage, not just data.user
+      // Save entire response to localStorage and token separately
       localStorage.setItem("user", JSON.stringify(data));
+      localStorage.setItem("token", data.token);
       setIsLoading(false);
-      return true; // indicate success
+      return data; // return the data object with token and email
     } catch (err) {
       setError("Network error");
       setIsLoading(false);

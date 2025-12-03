@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useField from "../hooks/useField";
 import useLogin from "../hooks/useLogin";
 
-const Login = () => {
+const Login = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
   const email = useField("email");
   const password = useField("password");
@@ -22,9 +22,11 @@ const Login = () => {
     });
 
     if (success) {
-      navigate("/");
+      // Token and user info already stored by the hook
+      if (setIsAuthenticated) setIsAuthenticated(true);
+      navigate("/"); // Redirect home after successful login
     } else {
-      setFormError(error || "Login fail.Try again");
+      setFormError(error || "Login failed. Try again.");
     }
   };
 

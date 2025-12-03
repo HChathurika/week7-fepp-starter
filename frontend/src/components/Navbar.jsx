@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-const Navbar = () => {
+const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
@@ -23,10 +23,15 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
+    if (setIsAuthenticated) setIsAuthenticated(false);
     window.dispatchEvent(new Event("userUpdated"));
     navigate("/");
   };
+
+  // Use isAuthenticated prop if provided, otherwise check user state
+  const authenticated = isAuthenticated !== undefined ? isAuthenticated : !!user;
 
   return (
     <nav className="navbar" style={{
@@ -40,15 +45,15 @@ const Navbar = () => {
       <h1 style={{ margin: 0 }}>Job Search</h1>
       <div className="links" style={{ display: "flex", gap: "15px", alignItems: "center" }}>
         <Link to="/">Home</Link>
-        <Link to="/add-job">Add Job</Link>
-        {!user ? (
+        {authenticated && <Link to="/add-job">Add Job</Link>}
+        {!authenticated ? (
           <>
             <Link to="/signup">Sign Up</Link>
             <Link to="/login">Login</Link>
           </>
         ) : (
           <>
-            <span>Welcome, {user.email}!</span>
+            <span>Welcome, {user?.email || "User"}!</span>
             <button onClick={handleLogout} style={{ padding: "5px 10px" }}>Logout</button>
           </>
         )}

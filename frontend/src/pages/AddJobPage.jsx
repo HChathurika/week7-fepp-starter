@@ -33,11 +33,29 @@ const AddJobPage = ({ setJobs }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Get token from localStorage (stored separately or in user object)
+      const token = localStorage.getItem("token") || JSON.parse(localStorage.getItem("user") || "null")?.token;
+
+      if (!token) {
+        alert("You must be logged in to add a job.");
+        navigate("/login");
+        return;
+      }
+
       const res = await fetch("/api/jobs", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(job)
       });
+
+      if (res.status === 401) {
+        alert("You are not authorized to add a job. Please log in again.");
+        navigate("/login");
+        return;
+      }
 
       if (!res.ok) throw new Error("Failed to add job");
       const newJob = await res.json();
