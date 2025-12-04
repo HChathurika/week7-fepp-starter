@@ -8,8 +8,11 @@ const userSchema = new Schema(
     password: { type: String, required: true },
     phone_number: { type: String, required: true },
     gender: { type: String, required: true },
-    date_of_birth: { type: Date, required: true },
-    membership_status: { type: String, required: true },
+    address: {
+      street: { type: String, required: true },
+      city: { type: String, required: true },
+      zipCode: { type: String, required: true },
+    },
   },
   { timestamps: true, versionKey: false }
 );

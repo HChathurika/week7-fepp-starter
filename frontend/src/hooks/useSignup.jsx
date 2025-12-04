@@ -23,9 +23,9 @@ export default function useSignup(url) {
         return false;
       }
 
-      // Save token + user
       localStorage.setItem("user", JSON.stringify(data));
       localStorage.setItem("token", data.token);
+
       window.dispatchEvent(new Event("userUpdated"));
 
       setIsLoading(false);

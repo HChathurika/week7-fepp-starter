@@ -9,9 +9,9 @@ const generateToken = (_id) => {
   });
 };
 
-// @desc    Register new user
-// @route   POST /api/users/signup
-// @access  Public
+// ==========================
+//      SIGNUP USER
+// ==========================
 const signupUser = async (req, res) => {
   const {
     name,
@@ -19,8 +19,7 @@ const signupUser = async (req, res) => {
     password,
     phone_number,
     gender,
-    date_of_birth,
-    membership_status,
+    address,   // { street, city, zipCode }
   } = req.body;
 
   try {
@@ -30,34 +29,30 @@ const signupUser = async (req, res) => {
       !password ||
       !phone_number ||
       !gender ||
-      !date_of_birth ||
-      !membership_status
+      !address?.street ||
+      !address?.city ||
+      !address?.zipCode
     ) {
       throw new Error("Please add all fields");
     }
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    // Check if user exists
     const userExists = await User.findOne({ email: normalizedEmail });
-
     if (userExists) {
       throw new Error("User already exists");
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user
     const user = await User.create({
       name,
       email: normalizedEmail,
       password: hashedPassword,
       phone_number,
       gender,
-      date_of_birth,      // string from form; mongoose will cast to Date
-      membership_status,
+      address,
     });
 
     const token = generateToken(user._id);
@@ -72,9 +67,9 @@ const signupUser = async (req, res) => {
   }
 };
 
-// @desc    Authenticate a user
-// @route   POST /api/users/login
-// @access  Public
+// ==========================
+//      LOGIN USER
+// ==========================
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -84,8 +79,6 @@ const loginUser = async (req, res) => {
     }
 
     const normalizedEmail = email.toLowerCase().trim();
-
-    // Check for user email
     const user = await User.findOne({ email: normalizedEmail });
 
     if (user && (await bcrypt.compare(password, user.password))) {
@@ -100,9 +93,9 @@ const loginUser = async (req, res) => {
   }
 };
 
-// @desc    Get user data
-// @route   GET /api/users/me
-// @access  Private
+// ==========================
+//      GET USER (optional)
+// ==========================
 const getMe = async (req, res) => {
   try {
     res.status(200).json(req.user);
@@ -111,6 +104,9 @@ const getMe = async (req, res) => {
   }
 };
 
+// ==========================
+//      EXPORTS
+// ==========================
 module.exports = {
   signupUser,
   loginUser,
