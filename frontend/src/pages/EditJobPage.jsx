@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-const EditJobPage = ({ setJobs }) => {
+// Experiment: Handler passed as prop from App.jsx instead of defined here
+const EditJobPage = ({ updateJob }) => {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -51,57 +52,14 @@ const EditJobPage = ({ setJobs }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Get token from localStorage (stored separately or in user object)
-    const token = localStorage.getItem("token") || JSON.parse(localStorage.getItem("user") || "null")?.token;
-    if (!token) {
-      alert("You must be logged in to edit a job.");
-      navigate("/login");
-      return;
-    }
-
     try {
-      console.log("Sending update request with job data:", job);
-      console.log("Location value being sent:", job.location);
-      
-      const res = await fetch(`/api/jobs/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(job)
-      });
-
-      if (res.status === 401) {
-        alert("You are not authorized to edit this job. Please log in again.");
-        navigate("/login");
-        return;
-      }
-
-      if (!res.ok) throw new Error("Failed to update job");
-
-      const updatedJob = await res.json();
-      
-      console.log("Updated job from server:", updatedJob);
-      console.log("Location value in updated job:", updatedJob.location);
-      
-      // Update the jobs list in App.jsx state
-      if (setJobs) {
-        setJobs((prev) =>
-          prev.map((j) => {
-            // Match by both _id and id (virtual field)
-            const matches = String(j._id) === String(id) || String(j.id) === String(id);
-            return matches ? updatedJob : j;
-          })
-        );
-      }
-
-      // Navigate with updated job data in state so JobPage can use it immediately
+      const updatedJob = await updateJob(id, job);
+      // Navigate to the job detail page
       const jobId = updatedJob._id || updatedJob.id || id;
-      navigate(`/jobs/${jobId}`, { state: { updatedJob } });
+      navigate(`/jobs/${jobId}`);
     } catch (err) {
       console.error("Error updating job:", err);
-      alert("Failed to update job");
+      alert(err.message || "Failed to update job");
     }
   };
 

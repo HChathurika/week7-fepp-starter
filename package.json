@@ -1,0 +1,20 @@
+{
+  "name": "week7-fepp-starter",
+  "version": "1.0.0",
+  "description": "1. **Install Backend Dependencies**",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HChathurika/week7-fepp-starter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HChathurika/week7-fepp-starter/issues"
+  },
+  "homepage": "https://github.com/HChathurika/week7-fepp-starter#readme"
+}

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AddJobPage = ({ setJobs }) => {
+// Experiment: Handler passed as prop from App.jsx instead of defined here
+const AddJobPage = ({ addJob }) => {
   const navigate = useNavigate();
 
   const [job, setJob] = useState({
@@ -33,37 +34,11 @@ const AddJobPage = ({ setJobs }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Get token from localStorage (stored separately or in user object)
-      const token = localStorage.getItem("token") || JSON.parse(localStorage.getItem("user") || "null")?.token;
-
-      if (!token) {
-        alert("You must be logged in to add a job.");
-        navigate("/login");
-        return;
-      }
-
-      const res = await fetch("/api/jobs", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(job)
-      });
-
-      if (res.status === 401) {
-        alert("You are not authorized to add a job. Please log in again.");
-        navigate("/login");
-        return;
-      }
-
-      if (!res.ok) throw new Error("Failed to add job");
-      const newJob = await res.json();
-      setJobs((prev) => [...prev, newJob]);
+      await addJob(job);
       navigate("/"); // go back to job list
     } catch (err) {
       console.error(err);
-      alert("Failed to add job");
+      alert(err.message || "Failed to add job");
     }
   };
 
