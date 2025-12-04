@@ -27,7 +27,7 @@ export default function useLogin(url) {
       localStorage.setItem("token", data.token);
       window.dispatchEvent(new Event("userUpdated"));
       setIsLoading(false);
-      return data; // return the data object with token and email
+      return true;
     } catch (err) {
       setError("Network error");
       setIsLoading(false);

@@ -4,30 +4,32 @@ export default function useSignup(url) {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const signup = async (object) => {
+  const signup = async (userData) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(url, {
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(object),
+        body: JSON.stringify(userData),
       });
 
-      const data = await response.json().catch(() => ({}));
+      const data = await res.json().catch(() => ({}));
 
-      if (!response.ok) {
+      if (!res.ok) {
         setError(data.error || "Signup failed");
         setIsLoading(false);
-        return false; // indicate failure
+        return false;
       }
 
-      // Save entire response to localStorage and token separately
+      // Save token + user
       localStorage.setItem("user", JSON.stringify(data));
       localStorage.setItem("token", data.token);
+      window.dispatchEvent(new Event("userUpdated"));
+
       setIsLoading(false);
-      return data; // return the data object with token and email
+      return true;
     } catch (err) {
       setError("Network error");
       setIsLoading(false);

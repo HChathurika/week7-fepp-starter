@@ -6,7 +6,6 @@ import useSignup from "../hooks/useSignup";
 const Signup = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
 
-  // Form fields
   const name = useField("text");
   const email = useField("email");
   const password = useField("password");
@@ -22,36 +21,35 @@ const Signup = ({ setIsAuthenticated }) => {
     e.preventDefault();
     setFormError("");
 
-    // Normalize email
     const normalizedEmail = email.value.toLowerCase().trim();
 
-    try {
-      const success = await signup({
-        name: name.value.trim(),
-        email: normalizedEmail,
-        password: password.value,
-        phone_number: phoneNumber.value.trim(),
-        gender: gender.value.trim(),
-        date_of_birth: dateOfBirth.value,
-        membership_status: membershipStatus.value.trim(),
-      });
+    const payload = {
+      name: name.value.trim(),
+      email: normalizedEmail,
+      password: password.value,
+      phone_number: phoneNumber.value.trim(),
+      gender: gender.value.trim(),
+      date_of_birth: dateOfBirth.value,
+      membership_status: membershipStatus.value.trim(),
+    };
 
-      if (success) {
-        // Token and user info already stored by the hook
-        if (setIsAuthenticated) setIsAuthenticated(true);
-        navigate("/"); // Redirect home after successful signup
-      } else {
-        setFormError(error || "Signup failed. Try again.");
-      }
-    } catch (err) {
-      setFormError("Signup failed. Try again.");
+    const success = await signup(payload);
+
+    if (success) {
+      if (setIsAuthenticated) setIsAuthenticated(true);
+      navigate("/");
+    } else {
+      setFormError(error || "Signup failed. Try again.");
     }
   };
 
   return (
     <div className="create" style={{ padding: "20px", maxWidth: "400px" }}>
       <h2>Sign Up</h2>
-      <form onSubmit={handleFormSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <form
+        onSubmit={handleFormSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+      >
         <label>Name:</label>
         <input {...name} required />
 
@@ -62,16 +60,16 @@ const Signup = ({ setIsAuthenticated }) => {
         <input {...password} required />
 
         <label>Phone Number:</label>
-        <input {...phoneNumber} />
+        <input {...phoneNumber} required />
 
         <label>Gender:</label>
-        <input {...gender} />
+        <input {...gender} required />
 
         <label>Date of Birth:</label>
-        <input {...dateOfBirth} />
+        <input {...dateOfBirth} required />
 
         <label>Membership Status:</label>
-        <input {...membershipStatus} />
+        <input {...membershipStatus} required />
 
         <button
           type="submit"
@@ -88,7 +86,9 @@ const Signup = ({ setIsAuthenticated }) => {
           {isLoading ? "Signing up..." : "Sign Up"}
         </button>
 
-        {formError && <p style={{ color: "red" }}>{formError}</p>}
+        {(formError || error) && (
+          <p style={{ color: "red" }}>{formError || error}</p>
+        )}
       </form>
     </div>
   );

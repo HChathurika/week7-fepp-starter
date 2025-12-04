@@ -22,6 +22,7 @@ const signupUser = async (req, res) => {
     date_of_birth,
     membership_status,
   } = req.body;
+
   try {
     if (
       !name ||
@@ -32,14 +33,15 @@ const signupUser = async (req, res) => {
       !date_of_birth ||
       !membership_status
     ) {
-      res.status(400);
       throw new Error("Please add all fields");
     }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
     // Check if user exists
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email: normalizedEmail });
 
     if (userExists) {
-      res.status(400);
       throw new Error("User already exists");
     }
 
@@ -50,23 +52,22 @@ const signupUser = async (req, res) => {
     // Create user
     const user = await User.create({
       name,
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
       phone_number,
       gender,
-      date_of_birth,
+      date_of_birth,      // string from form; mongoose will cast to Date
       membership_status,
     });
 
-    if (user) {
-      // console.log(user._id);
-     const token = generateToken(user._id);
-      res.status(201).json({ email, token });
-    } else {
-      res.status(400);
-      throw new Error("Invalid user data");
-    }
+    const token = generateToken(user._id);
+
+    res.status(201).json({
+      email: user.email,
+      token,
+    });
   } catch (error) {
+    console.error("Signup error:", error.message);
     res.status(400).json({ error: error.message });
   }
 };
@@ -76,18 +77,25 @@ const signupUser = async (req, res) => {
 // @access  Public
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
+
   try {
+    if (!email || !password) {
+      throw new Error("Please add all fields");
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
     // Check for user email
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = generateToken(user._id);
-      res.status(200).json({ email, token });
+      res.status(200).json({ email: user.email, token });
     } else {
-      res.status(400);
       throw new Error("Invalid credentials");
     }
   } catch (error) {
+    console.error("Login error:", error.message);
     res.status(400).json({ error: error.message });
   }
 };
